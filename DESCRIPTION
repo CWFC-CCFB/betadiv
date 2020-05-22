@@ -1,0 +1,27 @@
+Package: betadiv
+Type: Package
+Title: Multiple-site indices and estimators for the assessment of beta diversity 
+Version: 1.0.0
+Author: Mathieu Fortin
+Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
+Description: Implement some multiple-site dissimilarity indices that can be used to assess the beta diversity in 
+   a population. The multiple-site version of the indices of Simpson, Sorensen and nestedness are available in this 
+   package. These indices were adapted from those developed by Baselga (2010, Global Ecology and Biogeography 19:134-143)
+   in order to make them population size-independent. All the details behind the calculation and estimation of these 
+   adapted indices can be found in Fortin et al. (2020, Global Ecology and Biogeography 29: 1073-1084). 
+URL: https://sourceforge.net/p/mrnfforesttools/divindices/wiki/Home/
+Depends: R (>= 3.4.0)
+Imports: 
+    J4R (>= 1.0.7),
+    graphics,
+    methods, 
+    stats, 
+    utils
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0
+SystemRequirements: Java 8
+Suggests: 
+    testthat
+
