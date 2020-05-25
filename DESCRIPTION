@@ -13,11 +13,7 @@ Description: Implement the multiple-site dissimilarity indices of Simpson, Soren
 URL: https://sourceforge.net/p/mrnfforesttools/divindices/wiki/Home/
 Depends: R (>= 3.4.0)
 Imports: 
-    J4R (>= 1.0.7),
-    graphics,
-    methods, 
-    stats, 
-    utils
+    J4R (>= 1.0.7)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
