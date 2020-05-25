@@ -32,7 +32,7 @@ so that it is possible to compare the dissimilarity of two populations of unequa
 This function implements estimators of these adapted indices. A sample of plots with species observations must be passed to the function
 as well as the population size, that is the number of plots that fit in this population. The variance estimation is based on the Jackknife
 method. The function returns a data.frame object with the estimates of the multiple-site version of Simpson, Sorensen and nestedness as well
-as their associated variances. In addition, the function also provides an estimate of the alpha and gamma diversity. The
+as their associated standard errors. In addition, the function also provides an estimate of the alpha and gamma diversity. The
 gamma diversity estimate is based on the Chao2 estimator (Chao and Lin 2012).
 }
 \examples{
