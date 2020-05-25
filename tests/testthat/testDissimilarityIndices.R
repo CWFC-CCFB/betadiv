@@ -5,8 +5,6 @@
 
 dataReleves <- betadiv::subsetUrbanEnvironmentNancy
 
-dissEst <- createDissimilarityIndicesEstimator()
-
 strataList <- unique(dataReleves$Stratum)
 
 output <- NULL
@@ -23,13 +21,9 @@ for (stratum in strataList) {
     populationSize <- 100000
   }
 
-  sample <- createSample(releve.s, "CODE_POINT", "Espece")
-  indices <- getDissimilarityEstimates(dissEst, sample, populationSize)
+  indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize)
   indices$stratum <- stratum
   output <- rbind(output, indices)
-  baselga.s <- getBaselgaDissimilarityIndices(dissEst, sample)
-  baselga.s$stratum <- stratum
-  baselga <- rbind(baselga, baselga.s)
 }
 
 test_that("Testing forests", {
@@ -50,14 +44,6 @@ test_that("Testing forests", {
   expect_equal(abs(output[which(output$stratum == "parking"), "stdErrNestedness"] - 0.04033552) < 1E-8, TRUE)
   expect_equal(abs(output[which(output$stratum == "parking"), "Alpha"] - 13.09091) < 1E-5, TRUE)
   expect_equal(abs(output[which(output$stratum == "parking"), "Gamma"] - 181.8853) < 1E-4, TRUE)
-
-  expect_equal(abs(baselga[which(baselga$stratum == "forest"), "Simpson"] - 0.6894977) < 1E-6, TRUE)
-  expect_equal(abs(baselga[which(baselga$stratum == "forest"), "Sorensen"] - 0.8095238) < 1E-6, TRUE)
-  expect_equal(abs(baselga[which(baselga$stratum == "forest"), "Nestedness"] - 0.12002609) < 1E-6, TRUE)
-
-  expect_equal(abs(baselga[which(baselga$stratum == "parking"), "Simpson"] - 0.8531856) < 1E-6, TRUE)
-  expect_equal(abs(baselga[which(baselga$stratum == "parking"), "Sorensen"] - 0.9226277) < 1E-6, TRUE)
-  expect_equal(abs(baselga[which(baselga$stratum == "parking"), "Nestedness"] - 0.06944214) < 1E-6, TRUE)
 })
 
-shutdownJava()
+J4R::shutdownJava()

@@ -4,34 +4,36 @@
 \alias{getDissimilarityEstimates}
 \title{Estimate Dissimilarity Indices}
 \usage{
-getDissimilarityEstimates(dissimilarityEstimator, sample, populationSize)
+getDissimilarityEstimates(dataset, plotIdField, speciesIdField, populationSize)
 }
 \arguments{
-\item{dissimilarityEstimator}{a java.object that can estimate the dissimilarity indices. It
-should be generated using the createDissimilarityIndicesEstimator function}
+\item{dataset}{a data.frame object that contains at least two fields: one for the sample plot ids and the other
+for the species. Each row is actually an observation of a species in a particular plot.}
 
-\item{sample}{a java.object instance that stands for a Map in the Java environment. It should be
-generated using the createSample function}
+\item{plotIdField}{the name of the field that contains the sample plot id in the dataset.}
 
-\item{populationSize}{the number of units (plots) in the population}
+\item{speciesIdField}{the name of the field that contains the species in the dataset.}
+
+\item{populationSize}{the number of units in the population. That is the total number of sample plots that
+could fit in the population. Under the assumption that the plot size is constant, the population size is calculated
+as the area of the population divided by the area of a single sample plot.}
 }
 \value{
 a data.frame object with the estimated dissimilarity indices and their standard errors
 }
 \description{
-This function computes an estimate of the dissimilarity indices of Simpson, Sorensen and
+This function computes estimates of the adapted dissimilarity indices of Simpson, Sorensen and
 nestedness from a sample.
 }
 \details{
-The processing of this function is done in Java using the J4R package. In order to use this function,
-the user must first run the createDissimilarityIndicesEstimator function which creates a Java object that
-can estimate the dissimilarity. The result of the createDissimilarityIndicesEstimator function must be
-stored in a variable and passed to this function.
+The dissimilarity indices were adapted from those of Baselga (2010). These adapted indices are population size independent
+so that it is possible to compare the dissimilarity of two populations of unequal sizes.
 
-A sample of plots with species observation must also be intantiated using the createSample function.
-The result of the createSample function is the second parameter of this function.
-
-Finally, the user must provide the population size, that is the number of plots that fit in this population.
+This function implements estimators of these adapted indices. A sample of plots with species observations must be passed to the function
+as well as the population size, that is the number of plots that fit in this population. The variance estimation is based on the Jackknife
+method. The function returns a data.frame object with the estimates of the multiple-site version of Simpson, Sorensen and nestedness as well
+as their associated variances. In addition, the function also provides an estimate of the alpha and gamma diversity. The
+gamma diversity estimate is based on the Chao2 estimator (Chao and Lin 2012).
 }
 \examples{
 
@@ -39,7 +41,6 @@ Finally, the user must provide the population size, that is the number of plots 
 
 dataReleves <- betadiv::subsetUrbanEnvironmentNancy
 
-dissEst <- createDissimilarityIndicesEstimator()
 strataList <- unique(dataReleves$Stratum)
 output <- NULL
 baselga <- NULL
@@ -55,17 +56,20 @@ for (stratum in strataList) {
     populationSize <- 100000
   }
 
-  sample <- createSample(releve.s, "CODE_POINT", "Espece")
-  indices <- getDissimilarityEstimates(dissEst, sample, populationSize)
+  indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize)
   indices$stratum <- stratum
   output <- rbind(output, indices)
-  baselga.s <- getBaselgaDissimilarityIndices(dissEst, sample)
-  baselga.s$stratum <- stratum
-  baselga <- rbind(baselga, baselga.s)
 }
-}
-\seealso{
-createDissimilarityIndicesEstimator
 
-createSample
+}
+\references{
+Fortin, M., A. Kondratyeva, and R. Van Couwenberghe. 2020. Improved Beta-diversity estimators
+based on multiple-site dissimilarity: Distinguishing the sample from the population. Global Ecology and
+Biogeography 29: 1073-1084. \url{https://doi.org/10.1111/geb.13080}
+
+Baselga, A. 2010. Partitioning the turnover and nestedness components of beta diversity.
+Global Ecology and Biogeography 19:134-143.
+
+Chao A., and C.-W Lin. 2012. Nonparametric lower bounds for species richness and shared species richness
+under sampling without replacement. Biometrics 68: 912-921.
 }
