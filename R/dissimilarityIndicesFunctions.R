@@ -70,7 +70,7 @@
 #' This function implements estimators of these adapted indices. A sample of plots with species observations must be passed to the function
 #' as well as the population size, that is the number of plots that fit in this population. The variance estimation is based on the Jackknife
 #' method. The function returns a data.frame object with the estimates of the multiple-site version of Simpson, Sorensen and nestedness as well
-#' as their associated variances. In addition, the function also provides an estimate of the alpha and gamma diversity. The
+#' as their associated standard errors. In addition, the function also provides an estimate of the alpha and gamma diversity. The
 #' gamma diversity estimate is based on the Chao2 estimator (Chao and Lin 2012).
 #'
 #' @param dataset a data.frame object that contains at least two fields: one for the sample plot ids and the other
@@ -144,7 +144,12 @@ getDissimilarityEstimates <- function(dataset, plotIdField, speciesIdField, popu
   nestednessEstimate <- J4R::callJavaMethod(dissimilarityEstimates, "getBetaDiversity", nestednessEnum)
 
   Alpha <- J4R::callJavaMethod(J4R::callJavaMethod(alphaEstimate, "getMean"), "getSumOfElements")
+  varAlpha <- J4R::callJavaMethod(J4R::callJavaMethod(alphaEstimate, "getVariance"), "getSumOfElements")
+  stdErrAlpha <- varAlpha^.5
+
   Gamma <- J4R::callJavaMethod(J4R::callJavaMethod(gammaEstimate, "getMean"), "getSumOfElements")
+  varGamma <- J4R::callJavaMethod(J4R::callJavaMethod(gammaEstimate, "getVariance"), "getSumOfElements")
+  stdErrGamma <- varGamma^.5
 
   Simpson <- J4R::callJavaMethod(J4R::callJavaMethod(simpsonEstimate, "getMean"), "getSumOfElements")
   varSimpson <- J4R::callJavaMethod(J4R::callJavaMethod(simpsonEstimate, "getVariance"), "getSumOfElements")
@@ -158,7 +163,11 @@ getDissimilarityEstimates <- function(dataset, plotIdField, speciesIdField, popu
   varNestedness <- J4R::callJavaMethod(J4R::callJavaMethod(nestednessEstimate, "getVariance"), "getSumOfElements")
   stdErrNestedness <- varNestedness^.5
 
-  return(data.frame(n, Simpson, varSimpson, stdErrSimpson, Sorensen, varSorensen, stdErrSorensen, Nestedness, varNestedness, stdErrNestedness, Alpha, Gamma))
+  return(data.frame(n, Simpson, stdErrSimpson,
+                    Sorensen, stdErrSorensen,
+                    Nestedness, stdErrNestedness,
+                    Alpha, stdErrAlpha,
+                    Gamma, stdErrGamma))
 }
 
 
