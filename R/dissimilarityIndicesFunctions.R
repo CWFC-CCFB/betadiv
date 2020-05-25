@@ -23,38 +23,16 @@
 
 
 
-#'
-#' Instantiate an Estimator of Dissimilarity Indices
-#'
-#' It creates a java.object that can compute the estimate of dissimilarity
-#' indices of Simpson, Sorensen and nestedness.
-#'
-#' @return a java.object instance
-#'
-#' @export
-createDissimilarityIndicesEstimator <- function() {
+.createDissimilarityIndicesEstimator <- function() {
   .connectToBetadivLibrary()
-  print("Instantiating the estimator of dissimilarity indices...")
+#  print("Instantiating the estimator of dissimilarity indices...")
   msi <- J4R::createJavaObject("biodiversity.indices.MultipleSiteIndex")
-  print("Done.")
+#  print("Done.")
   return(msi)
 }
 
 
-
-#'
-#' Create a Sample
-#'
-#' It creates a sample from which the dissimilarity indices can be estimated.
-#'
-#'@param dataSet a data.frame object
-#'@param plotIdField a character string which stands for the field that contains the plot ids.
-#'@param speciesIdField a character string which stands for the field that contains the species names.
-#'
-#'@return a java.object instance that represents a Map object in the Java environment
-#'
-#'@export
-createSample <- function(dataSet, plotIdField, speciesIdField) {
+.createSample <- function(dataSet, plotIdField, speciesIdField) {
   .connectToBetadivLibrary()
   sample <- J4R::createJavaObject("java.util.HashMap")
 
@@ -83,25 +61,25 @@ createSample <- function(dataSet, plotIdField, speciesIdField) {
 #'
 #' Estimate Dissimilarity Indices
 #'
-#' This function computes an estimate of the dissimilarity indices of Simpson, Sorensen and
+#' This function computes estimates of the adapted dissimilarity indices of Simpson, Sorensen and
 #' nestedness from a sample.
 #'
-#' The processing of this function is done in Java using the J4R package. In order to use this function,
-#' the user must first run the createDissimilarityIndicesEstimator function which creates a Java object that
-#' can estimate the dissimilarity. The result of the createDissimilarityIndicesEstimator function must be
-#' stored in a variable and passed to this function.
+#' The dissimilarity indices were adapted from those of Baselga (2010). These adapted indices are population size independent
+#' so that it is possible to compare the dissimilarity of two populations of unequal sizes.
 #'
-#' A sample of plots with species observation must also be intantiated using the createSample function.
-#' The result of the createSample function is the second parameter of this function.
+#' This function implements estimators of these adapted indices. A sample of plots with species observations must be passed to the function
+#' as well as the population size, that is the number of plots that fit in this population. The variance estimation is based on the Jackknife
+#' method. The function returns a data.frame object with the estimates of the multiple-site version of Simpson, Sorensen and nestedness as well
+#' as their associated variances. In addition, the function also provides an estimate of the alpha and gamma diversity. The
+#' gamma diversity estimate is based on the Chao2 estimator (Chao and Lin 2012).
 #'
-#' Finally, the user must provide the population size, that is the number of plots that fit in this population.
-#'
-#'
-#' @param dissimilarityEstimator a java.object that can estimate the dissimilarity indices. It
-#' should be generated using the createDissimilarityIndicesEstimator function
-#' @param sample a java.object instance that stands for a Map in the Java environment. It should be
-#' generated using the createSample function
-#' @param populationSize the number of units (plots) in the population
+#' @param dataset a data.frame object that contains at least two fields: one for the sample plot ids and the other
+#' for the species. Each row is actually an observation of a species in a particular plot.
+#' @param plotIdField the name of the field that contains the sample plot id in the dataset.
+#' @param speciesIdField the name of the field that contains the species in the dataset.
+#' @param populationSize the number of units in the population. That is the total number of sample plots that
+#' could fit in the population. Under the assumption that the plot size is constant, the population size is calculated
+#' as the area of the population divided by the area of a single sample plot.
 #'
 #' @return a data.frame object with the estimated dissimilarity indices and their standard errors
 #'
@@ -111,7 +89,6 @@ createSample <- function(dataSet, plotIdField, speciesIdField) {
 #'
 #' dataReleves <- betadiv::subsetUrbanEnvironmentNancy
 #'
-#' dissEst <- createDissimilarityIndicesEstimator()
 #' strataList <- unique(dataReleves$Stratum)
 #' output <- NULL
 #' baselga <- NULL
@@ -127,20 +104,26 @@ createSample <- function(dataSet, plotIdField, speciesIdField) {
 #'     populationSize <- 100000
 #'   }
 #'
-#'   sample <- createSample(releve.s, "CODE_POINT", "Espece")
-#'   indices <- getDissimilarityEstimates(dissEst, sample, populationSize)
+#'   indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize)
 #'   indices$stratum <- stratum
 #'   output <- rbind(output, indices)
-#'   baselga.s <- getBaselgaDissimilarityIndices(dissEst, sample)
-#'   baselga.s$stratum <- stratum
-#'   baselga <- rbind(baselga, baselga.s)
 #' }
-
-#' @seealso createDissimilarityIndicesEstimator
-#' @seealso createSample
+#'
+#' @references Fortin, M., A. Kondratyeva, and R. Van Couwenberghe. 2020. Improved Beta-diversity estimators
+#' based on multiple-site dissimilarity: Distinguishing the sample from the population. Global Ecology and
+#' Biogeography 29: 1073-1084. \url{https://doi.org/10.1111/geb.13080}
+#'
+#' Baselga, A. 2010. Partitioning the turnover and nestedness components of beta diversity.
+#' Global Ecology and Biogeography 19:134-143.
+#'
+#' Chao A., and C.-W Lin. 2012. Nonparametric lower bounds for species richness and shared species richness
+#' under sampling without replacement. Biometrics 68: 912-921.
+#'
 #'
 #' @export
-getDissimilarityEstimates <- function(dissimilarityEstimator, sample, populationSize) {
+getDissimilarityEstimates <- function(dataset, plotIdField, speciesIdField, populationSize) {
+  dissimilarityEstimator <- .createDissimilarityIndicesEstimator()
+  sample <- .createSample(dataset, plotIdField, speciesIdField)
   n <- J4R::callJavaMethod(sample, "size")
   messageToBeDisplayed <- paste("Estimating dissimilarity from a sample of", n, "plots...")
   if (n > 500) {
@@ -178,44 +161,5 @@ getDissimilarityEstimates <- function(dissimilarityEstimator, sample, population
   return(data.frame(n, Simpson, varSimpson, stdErrSimpson, Sorensen, varSorensen, stdErrSorensen, Nestedness, varNestedness, stdErrNestedness, Alpha, Gamma))
 }
 
-
-#'
-#' Calculate Baselga's Dissimilarity Indices
-#'
-#' This function computes Baselga's multiple-site dissimilarity indices of Simpson, Sorensen and
-#' nestedness from a set of assemblages.
-#'
-#' It assumes that the sample is exhaustive, that it is a census of the  population. If the sample is
-#' not exhaustive (the vast majority of the cases), then the getDissimilarityEstimates function should
-#' be used.
-#'
-#' @param dissimilarityEstimator a java.object that can compute or estimate the dissimilarity indices. It
-#' should be generated using the createDissimilarityIndicesEstimator function
-#' @param sample a java.object instance that stands for a Map in the Java environment. It should be
-#' generated using the createSample function
-#' @return a data.frame object with the estimated dissimilarity indices and their standard errors
-#'
-#' @seealso getDissimilarityEstimates
-#'
-#' @export
-getBaselgaDissimilarityIndices <- function(dissimilarityEstimator, sample) {
-  n <- J4R::callJavaMethod(sample, "size")
-  messageToBeDisplayed <- paste("Calculating Baselga's multiple-site dissimilarity indices from a sample of", n, "plots...")
-  if (n > 500) {
-    messageToBeDisplayed <- paste(messageToBeDisplayed, "This may take some time!")
-  }
-  message(messageToBeDisplayed)
-  dissimilarityIndices <- J4R::callJavaMethod(dissimilarityEstimator, "getMultiplesiteDissimilarityIndices", sample)
-
-  simpsonEnum <- J4R::createJavaObject("biodiversity.indices.DiversityIndices$BetaIndex", "Simpson")
-  sorensenEnum <- J4R::createJavaObject("biodiversity.indices.DiversityIndices$BetaIndex", "Sorensen")
-  nestednessEnum <- J4R::createJavaObject("biodiversity.indices.DiversityIndices$BetaIndex", "Nestedness")
-
-  Simpson <- J4R::callJavaMethod(dissimilarityIndices, "getBetaDiversity", simpsonEnum)
-  Sorensen <- J4R::callJavaMethod(dissimilarityIndices, "getBetaDiversity", sorensenEnum)
-  Nestedness <- J4R::callJavaMethod(dissimilarityIndices, "getBetaDiversity", nestednessEnum)
-
-  return(data.frame(Simpson, Sorensen, Nestedness))
-}
 
 

@@ -14,24 +14,14 @@
   .welcomeMessage()
 }
 
-.onUnload <- function(libpath) {
-  shutdownJava()
-}
+# .onUnload <- function(libpath) {
+#   shutdownJava()
+# }
+#
+# .onDetach <- function(libpath) {
+#   shutdownJava()
+# }
 
-.onDetach <- function(libpath) {
-  shutdownJava()
-}
-
-
-#'
-#' Extends the shutdownJava function of the J4R package
-#'
-#' @export
-shutdownJava <- function() {
-  if (J4R::isConnectedToJava()) {
-    J4R::shutdownJava()
-  }
-}
 
 .addToArray <- function(refArray, array) {
   if (length(refArray) != length(array)) {
