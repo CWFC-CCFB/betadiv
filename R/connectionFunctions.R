@@ -63,9 +63,9 @@
   }
 }
 
-.connectToBetadivLibrary <- function() {
+.connectToBetadivLibrary <- function(memSize = NULL) {
   if (!J4R::isConnectedToJava()) {
-    J4R::connectToJava()
+    J4R::connectToJava(memorySize = memSize)
   }
   .loadREpicea()
   .loadBetadiv()
