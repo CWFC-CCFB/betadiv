@@ -1,6 +1,7 @@
 ########################################################
 # R functions to estimate dissimilarity indices.
-# Author: Mathieu Fortin, Canadian Wood Fibre Centre
+# Author: Mathieu Fortin, Canadian Forest Service, Canadian Wood Fibre Centre
+# Copyright; Her Majesty the Queen in right of Canada
 # Date: April 2019
 ########################################################
 
