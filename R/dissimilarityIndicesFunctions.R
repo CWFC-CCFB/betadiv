@@ -24,8 +24,8 @@
 
 
 
-.createDissimilarityIndicesEstimator <- function() {
-  .connectToBetadivLibrary()
+.createDissimilarityIndicesEstimator <- function(memSize = NULL) {
+  .connectToBetadivLibrary(memSize)
 #  print("Instantiating the estimator of dissimilarity indices...")
   msi <- J4R::createJavaObject("biodiversity.indices.MultipleSiteIndex")
 #  print("Done.")
@@ -34,7 +34,7 @@
 
 
 .createSample <- function(dataSet, plotIdField, speciesIdField) {
-  .connectToBetadivLibrary()
+#  .connectToBetadivLibrary()
   sample <- J4R::createJavaObject("java.util.HashMap")
 
   for (plotId in unique(dataSet[,plotIdField])) {
@@ -81,6 +81,7 @@
 #' @param populationSize the number of units in the population. That is the total number of sample plots that
 #' could fit in the population. Under the assumption that the plot size is constant, the population size is calculated
 #' as the area of the population divided by the area of a single sample plot.
+#' @param memSize the size of the Java Virtual Machine in Mg (if not specified the JVM is instantiated with the default memory size, which depends on the available RAM)
 #'
 #' @return a data.frame object with the estimated dissimilarity indices and their standard errors
 #'
@@ -105,7 +106,8 @@
 #'     populationSize <- 100000
 #'   }
 #'
-#'   indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize)
+#'   indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece",
+#'                                          populationSize, memSize = 500)
 #'   indices$stratum <- stratum
 #'   output <- rbind(output, indices)
 #' }
@@ -122,8 +124,8 @@
 #'
 #'
 #' @export
-getDissimilarityEstimates <- function(dataset, plotIdField, speciesIdField, populationSize) {
-  dissimilarityEstimator <- .createDissimilarityIndicesEstimator()
+getDissimilarityEstimates <- function(dataset, plotIdField, speciesIdField, populationSize, memSize = NULL) {
+  dissimilarityEstimator <- .createDissimilarityIndicesEstimator(memSize)
   sample <- .createSample(dataset, plotIdField, speciesIdField)
   n <- J4R::callJavaMethod(sample, "size")
   messageToBeDisplayed <- paste("Estimating dissimilarity from a sample of", n, "plots...")

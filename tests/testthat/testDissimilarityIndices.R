@@ -21,7 +21,7 @@ for (stratum in strataList) {
     populationSize <- 100000
   }
 
-  indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize)
+  indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize, memSize = 500)
   indices$stratum <- stratum
   output <- rbind(output, indices)
 }
