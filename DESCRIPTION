@@ -4,6 +4,7 @@ Title: Estimators of Multiple-Site Dissimilarity Indices for the Assessment of B
 Version: 1.0.0
 Author: Mathieu Fortin, Anna Kondratyeva, Rosalinde Van Couwenberghe
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
+Copyright: Her Majesty the Queen in right of Canada
 Description: Implement the multiple-site dissimilarity indices of Simpson, Sorensen 
     and nestedness, which can be used to assess the beta diversity of a population. 
     These indices were adapted from those developed by Baselga (2010) 

@@ -1,7 +1,8 @@
 /*
  * This file is part of the betadiversityindices library
  *
- * Copyright (C) 2019-2020 Mathieu Fortin - Canadian Forest Service
+ * Author Mathieu Fortin - Canadian Forest Service
+ * Copyright (C) 2020 Her Majesty the Queen in right of Canada
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,13 @@ import biodiversity.indices.MultipleSiteIndex.SpeciesFreqMap;
 import repicea.math.Matrix;
 import repicea.stats.estimates.SimpleEstimate;
 
+/**
+ * This class computes the estimator of species richness developed known as Chao2. 
+ *  
+ * @author Mathieu Fortin
+ * @see Chao, A., & Colwell, R. K. (2017). Thirty years of progeny from Chao’s inequality: Estimating and comparing richness with incidence data
+ * and incomplete sampling. SORT: Statistics and Operations Research Transactions, 41(1), 3–54.
+ */
 public class Chao2Estimator {
 
 	

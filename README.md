@@ -8,7 +8,7 @@ and nestedness, which can be used to assess the beta diversity of a population.
 These indices were adapted from those developed by Baselga (2010, Global Ecology 
 and Biogeography 19:134--143) in order to make them population size-independent. 
 All the details behind the calculation and estimation of these adapted indices
-can be found in Fortin et al. (2020, Global Ecology and Biogeography 29: 1073-1084).  
+can be found in Fortin et al. (2020, Global Ecology and Biogeography 29: 1073-1084). 
 
 The betadiv package depends on the J4R package which is available on CRAN. The 
 dissimilarity indices are estimated using two Java libraries: betadiversityindices and
