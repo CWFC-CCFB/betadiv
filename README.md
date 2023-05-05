@@ -1,6 +1,10 @@
 The betadiv package
 ===============
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/CWFC-CCFB/betadiv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CWFC-CCFB/betadiv/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 The betadiv package is licensed under the GNU Lesser General Public License v3.0 (LGPL-3).
 
 The betadiv package implements the multiple-site dissimilarity indices of Simpson, Sorensen 
