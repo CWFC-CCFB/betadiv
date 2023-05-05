@@ -5,28 +5,55 @@
 
 library(betadiv)
 
-dataReleves <- betadiv::subsetUrbanEnvironmentNancy
+getDissimilarities <- function() {
+  tryCatch(
+    {
+      dataReleves <- betadiv::subsetUrbanEnvironmentNancy
 
-strataList <- unique(dataReleves$Stratum)
+      strataList <- unique(dataReleves$Stratum)
 
-output <- NULL
-baselga <- NULL
-stratum <- strataList[1]
+      output <- NULL
+      baselga <- NULL
+      stratum <- strataList[1]
 
-for (stratum in strataList) {
-  releve.s <- dataReleves[which(dataReleves$Stratum == stratum),]
-  if (stratum == "forest") {
-    populationSize <- 3089 * 10000 / (pi * 5^2)
-  } else if (stratum == "parking") {
-    populationSize <- 501 * 10000 / (pi * 5^2)
-  } else {
-    populationSize <- 100000
-  }
+      for (stratum in strataList) {
+        releve.s <- dataReleves[which(dataReleves$Stratum == stratum),]
+        if (stratum == "forest") {
+          populationSize <- 3089 * 10000 / (pi * 5^2)
+        } else if (stratum == "parking") {
+          populationSize <- 501 * 10000 / (pi * 5^2)
+        } else {
+          populationSize <- 100000
+        }
 
-  indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize, memSize = 500)
-  indices$stratum <- stratum
-  output <- rbind(output, indices)
+        indices <- getDissimilarityEstimates(releve.s, "CODE_POINT", "Espece", populationSize, memSize = 500)
+        indices$stratum <- stratum
+        output <- rbind(output, indices)
+      }
+      return(output)
+    },
+    error=function(cond) {
+      message(cond)
+      return(NA)
+    },
+    warning=function(cond) {
+      message(cond)
+      # Choose a return value in case of warning
+      return(NULL)
+    }
+  )
 }
+
+
+J4R::connectToJava()
+
+test_that("Testing failure because J4R does not have proper class path", {
+  expect_error(getDissimilarities())
+})
+
+J4R::shutdownClient()
+
+output <- getDissimilarities() ## now running with proper class path
 
 test_that("Testing forests", {
   expect_equal(abs(output[which(output$stratum == "forest"), "Simpson"] - 0.2603477) < 1E-6, TRUE)
@@ -52,5 +79,5 @@ test_that("Testing forests", {
   expect_equal(abs(output[which(output$stratum == "parking"), "stdErrGamma"] - 33.16738) < 1E-4, TRUE)
 })
 
-J4R::shutdownJava()
+shutdownClient()
 

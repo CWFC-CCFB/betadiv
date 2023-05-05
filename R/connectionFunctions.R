@@ -5,17 +5,36 @@
 # Date: April 2019
 ########################################################
 
+
+jarFilenames <- c("betadivcalc-1.0.1.jar", "repicea-1.9.4.jar", "repicea-mathstats-1.1.3.jar")
+
+
 .welcomeMessage <- function() {
   packageStartupMessage("Welcome to betadiv package! This package implements estimators of beta diversity indices.")
-  packageStartupMessage("For more information, visit https://sourceforge.net/p/mrnfforesttools/divindices/wiki/Home/ .")
+  packageStartupMessage("For more information, visit https://github.com/CWFC-CCFB/betadiv .")
 }
 
+.onDetach <- function(libpath) {
+  shutdownClient()
+}
+
+.onUnload <- function(libpath) {
+  shutdownClient()
+}
 
 .onAttach <- function(libname, pkgname) {
   .welcomeMessage()
 }
 
-
+#'
+#' Extend the visibility of the shutdownClient function in J4R.
+#'
+#' @export
+shutdownClient <- function() {
+  if (J4R::isConnectedToJava()) {
+    J4R::shutdownClient()
+  }
+}
 
 .addToArray <- function(refArray, array) {
   if (length(refArray) != length(array)) {
@@ -49,25 +68,35 @@
   return(dataFrame)
 }
 
-
-.loadREpicea <- function() {
-  if (!J4R::checkIfClasspathContains("repicea.jar")) {
-    J4R::addToClassPath("repicea.jar", packageName = "betadiv")
+.getLibraryPath <- function(packageName, jarFilename) {
+  filename <- system.file(jarFilename, package = packageName)
+  if (all(file.exists(filename))) {
+    filePath <- filename
   }
-}
-
-.connectToBetadivLibrary <- function(memSize = NULL) {
-  if (!J4R::isConnectedToJava()) {
-    J4R::connectToJava(memorySize = memSize)
+  else {
+    filePath <- NULL
   }
-  .loadREpicea()
-  .loadBetadiv()
+  return(filePath)
 }
 
 
-.loadBetadiv <- function() {
-  if (!J4R::checkIfClasspathContains("betadiversityindices.jar")) {
-    J4R::addToClassPath("betadiversityindices.jar", packageName = "betadiv")
+.loadLibrary <- function(memSize = NULL) {
+  if (J4R::isConnectedToJava()) {
+    for (jarName in jarFilenames) {
+      if (!J4R::checkIfClasspathContains(jarName)) {
+        stop(paste("It seems J4R is running but the class path does not contain this library: ", jarName, ". Shut down J4R using the shutdownClient function first and then re-run your code."))
+      }
+    }
+  } else {
+    path <- .getLibraryPath("betadiv", jarFilenames)
+    J4R::connectToJava(extensionPath = path, memorySize = memSize)
+    for (jarName in jarFilenames) {
+      if (!J4R::checkIfClasspathContains(jarName)) {
+        stop(paste("It seems J4R has not been able to load the", jarName, "library."))
+      }
+    }
   }
 }
+
+
 

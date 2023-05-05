@@ -25,16 +25,13 @@
 
 
 .createDissimilarityIndicesEstimator <- function(memSize = NULL) {
-  .connectToBetadivLibrary(memSize)
-#  print("Instantiating the estimator of dissimilarity indices...")
+  .loadLibrary(memSize)
   msi <- J4R::createJavaObject("biodiversity.indices.MultipleSiteIndex")
-#  print("Done.")
   return(msi)
 }
 
 
 .createSample <- function(dataSet, plotIdField, speciesIdField) {
-#  .connectToBetadivLibrary()
   sample <- J4R::createJavaObject("java.util.HashMap")
 
   for (plotId in unique(dataSet[,plotIdField])) {
