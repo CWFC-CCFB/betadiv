@@ -1,0 +1,4 @@
+Apr 29, 2024 10:24:39 AM j4r.net.server.AbstractServer startReceiverThread
+INFO: Server started
+Apr 29, 2024 10:24:39 AM j4r.app.AbstractGenericEngine shutdown
+INFO: Shutting down application...

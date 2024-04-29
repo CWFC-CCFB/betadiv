@@ -6,7 +6,7 @@
 ########################################################
 
 
-jarFilenames <- c("betadivcalc-1.0.1.jar", "repicea-1.9.4.jar", "repicea-mathstats-1.1.3.jar")
+jarFilenames <- c("betadivcalc-1.0.3.jar", "repicea-1.10.4.jar", "repicea-mathstats-1.3.13.jar")
 
 
 .welcomeMessage <- function() {
@@ -68,13 +68,12 @@ shutdownClient <- function() {
   return(dataFrame)
 }
 
-.getLibraryPath <- function(packageName, jarFilename) {
+.getLibraryPath <- function(packageName, jarFilename) {   #### TODO this method should stop if the jarFilename does not exist and not return NULL
   filename <- system.file(jarFilename, package = packageName)
   if (all(file.exists(filename))) {
     filePath <- filename
-  }
-  else {
-    filePath <- NULL
+  } else {
+    stop(paste("At least one of these files cannot be found in the installation:", paste(jarFilenames, collapse = ",")))
   }
   return(filePath)
 }

@@ -1,7 +1,7 @@
 Package: betadiv
 Type: Package
 Title: Estimators of Multiple-Site Dissimilarity Indices for the Assessment of Beta Diversity 
-Version: 1.1.0
+Version: 1.1.1
 Author: Mathieu Fortin, Anna Kondratyeva, Rosalinde Van Couwenberghe
 Maintainer: Mathieu Fortin <mathieu.fortin.re@gmail.com>
 Copyright: Her Majesty the Queen in right of Canada
@@ -14,11 +14,11 @@ Description: Implement the multiple-site dissimilarity indices of Simpson, Soren
 URL: https://github.com/CWFC-CCFB/betadiv
 Depends: R (>= 3.4.0)
 Imports: 
-    J4R (>= 1.2.1)
-License: LGPL-3
+    J4R (>= 1.2.2)
+License: LGPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 SystemRequirements: Java 8
 Suggests: 
     testthat
