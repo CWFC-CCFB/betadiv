@@ -12,9 +12,11 @@ Description: Implement the multiple-site dissimilarity indices of Simpson, Soren
     size-independent. All the details behind the calculation and estimation of 
     these adapted indices can be found in Fortin et al. (2020) <doi:10.1111/geb.13080>. 
 URL: https://github.com/CWFC-CCFB/betadiv
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.5.0)
 Imports: 
     J4R (>= 1.2.2)
+Remotes:
+    CWFC-CCFB/J4R
 License: LGPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
